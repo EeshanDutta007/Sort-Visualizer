@@ -1,3 +1,3 @@
 # Sort-Visualizer
 
-In Prog
+In Progress
