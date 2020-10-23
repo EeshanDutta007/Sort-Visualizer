@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
@@ -26,20 +27,35 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  StreamController<List<int>> _streamController;
+  Stream<List<int>> _stream;
   List<int> _numbers = [];
   int _samplesize = 500;
   int counter = 0;
   void _randomize() {
-    for (int i = 200; i < _samplesize; i++)
+    _numbers = [];
+    for (int i = 0; i < _samplesize; i++)
       _numbers.add(Random().nextInt(_samplesize));
-    setState(() {});
+    _streamController.add(_numbers);
   }
 
-  void sort() {}
+  Future<void> _sort() async {
+    for (int i = 0; i < 500; i++) {
+      for (int j = 0; j < 500 - i - 1; j++) {
+        if (_numbers[j] > _numbers[j + 1])
+          _numbers[j] =
+              _numbers[j] + _numbers[j + 1] - (_numbers[j + 1] = _numbers[j]);
+        await Future.delayed(Duration(microseconds: 500));
+        _streamController.add(_numbers);
+      }
+    }
+  }
 
   @override
   void initState() {
     super.initState();
+    _streamController = StreamController<List<int>>();
+    _stream = _streamController.stream;
     _randomize();
   }
 
@@ -52,6 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Container(
         padding: const EdgeInsets.only(top: 0.0),
         child: StreamBuilder<Object>(
+            stream: _stream,
             initialData: _numbers,
             builder: (context, snapshot) {
               List<int> numbers = snapshot.data;
@@ -62,8 +79,11 @@ class _MyHomePageState extends State<MyHomePage> {
                   counter++;
                   return Container(
                     child: CustomPaint(
-                      painter:
-                          BarPainter(width: 2.0, value: num, index: counter),
+                      painter: BarPainter(
+                          width:
+                              MediaQuery.of(context).size.width / _samplesize,
+                          value: num,
+                          index: counter),
                     ),
                   );
                 }).toList(),
@@ -77,7 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
             Expanded(
               child: FlatButton(
                 child: Text('Sort'),
-                onPressed: sort,
+                onPressed: _sort,
               ),
             ),
             Expanded(
