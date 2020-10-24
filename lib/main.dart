@@ -27,11 +27,22 @@ class MyHomePage extends StatefulWidget {
 }
 
 int samplesize = 10;
+int speed = 0;
 
 class _MyHomePageState extends State<MyHomePage> {
   StreamController<List<int>> _streamController;
   Stream<List<int>> _stream;
   List<int> _numbers = [];
+  int duration = 100000;
+  _changeSpeed() {
+    if (speed >= 3) {
+      speed = 0;
+      duration = 100000;
+    } else {
+      speed++;
+      duration = duration ~/ 2;
+    }
+  }
 
   int counter = 0;
   void _randomize() {
@@ -46,7 +57,7 @@ class _MyHomePageState extends State<MyHomePage> {
         if (_numbers[j] > _numbers[j + 1])
           _numbers[j] =
               _numbers[j] + _numbers[j + 1] - (_numbers[j + 1] = _numbers[j]);
-        await Future.delayed(Duration(microseconds: 100000));
+        await Future.delayed(Duration(microseconds: duration));
         _streamController.add(_numbers);
       }
     }
@@ -112,7 +123,19 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Text('Randomize'),
                 onPressed: _randomize,
               ),
-            )
+            ),
+            Expanded(
+              child: FlatButton(
+                onPressed: () {
+                  _changeSpeed();
+                  setState(() {});
+                },
+                child: Text(
+                  "${speed + 1}x",
+                  style: TextStyle(fontSize: 20),
+                ),
+              ),
+            ),
           ],
         ),
       ),
