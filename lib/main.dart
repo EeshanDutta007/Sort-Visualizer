@@ -35,13 +35,34 @@ class _MyHomePageState extends State<MyHomePage> {
   List<int> _numbers = [];
   int duration = 100000;
   _changeSpeed() {
-    if (speed >= 3) {
+    if (speed >= 9) {
       speed = 0;
       duration = 100000;
     } else {
       speed++;
       duration = duration ~/ 2;
     }
+  }
+
+  _changeSize() {
+    if (samplesize == 10)
+      samplesize = 20;
+    else if (samplesize == 20)
+      samplesize = 30;
+    else if (samplesize == 30)
+      samplesize = 40;
+    else if (samplesize == 40)
+      samplesize = 50;
+    else if (samplesize == 50)
+      samplesize = 100;
+    else if (samplesize == 100)
+      samplesize = 200;
+    else if (samplesize == 200)
+      samplesize = 400;
+    else if (samplesize == 400)
+      samplesize = 500;
+    else
+      samplesize = 10;
   }
 
   int counter = 0;
@@ -92,7 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   counter++;
                   return Container(
                     child: Padding(
-                      padding: const EdgeInsets.all(0.5),
+                      padding: const EdgeInsets.all(0.0),
                       child: CustomPaint(
                         painter: BarPainter(
                           width: MediaQuery.of(context).size.width /
@@ -109,32 +130,31 @@ class _MyHomePageState extends State<MyHomePage> {
             }),
       ),
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(15.0),
+        padding: const EdgeInsets.all(12.0),
         child: Row(
           children: <Widget>[
-            Expanded(
-              child: FlatButton(
-                child: Text('Sort'),
-                onPressed: _sort,
-              ),
+            FlatButton(
+              child: Text('Sort'),
+              onPressed: _sort,
             ),
-            Expanded(
-              child: FlatButton(
-                child: Text('Randomize'),
-                onPressed: _randomize,
-              ),
+            FlatButton(
+              child: Text('Randomize'),
+              onPressed: _randomize,
             ),
-            Expanded(
-              child: FlatButton(
-                onPressed: () {
-                  _changeSpeed();
-                  setState(() {});
-                },
-                child: Text(
-                  "${speed + 1}x",
-                  style: TextStyle(fontSize: 20),
-                ),
-              ),
+            FlatButton(
+              onPressed: () {
+                _changeSpeed();
+                setState(() {});
+              },
+              child: Text("${speed + 1}x"),
+            ),
+            FlatButton(
+              onPressed: () {
+                _changeSize();
+                _randomize();
+                setState(() {});
+              },
+              child: Text("${samplesize}S"),
             ),
           ],
         ),
